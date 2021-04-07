@@ -1,0 +1,24 @@
+
+
+/* Remove arrows from number inputs */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+.container {
+    padding-top: 1%
+}
+
+#calculate {
+    max-width: min-content;
+    padding-right: 12px;
+}
+
+select:invalid {
+    color: grey;
+}
+option {
+    color: black;
+}
