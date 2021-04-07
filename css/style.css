@@ -19,6 +19,34 @@ input[type=number]::-webkit-outer-spin-button {
 select:invalid {
     color: grey;
 }
+
 option {
     color: black;
+}
+
+.line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 1.5;
+}
+
+.tooltip {
+    display: block;
+    position: absolute;
+    background-color: white;
+    border: solid 1px #eee;
+    border-radius: 5px;
+    padding: 5px;
+    pointer-events: none;
+}
+
+.grid-line {
+    stroke: grey;
+    stroke-width: 0.5;
+    opacity: 0;
+    pointer-events: none;
+}
+
+path {
+    pointer-events: none;
 }

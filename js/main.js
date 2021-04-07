@@ -21,19 +21,19 @@ let group = svg.append("g")
 
 // create a view rect to handle all mouse events
 let view = group.append("rect")
-.attr("id", "viewport")
-.attr("width", width)
-.attr("height", height)
-.attr("x", 0)
-.attr("y", 0)
-.attr("fill", "white")
-.style("pointer-events", "all");
+    .attr("id", "viewport")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("fill", "white")
+    .style("pointer-events", "all");
 
 // append an invisible tooltip div
 let tooltip = d3.select("#my_dataviz")
-.append("div")
-.style("opacity", 0)
-.attr("class", "tooltip");
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip");
 
 // to parse Unix epoch to new Date object
 const parseTime = d3.timeParse("%Q");
@@ -66,7 +66,7 @@ function ValidateForm() {
 
 function Calculate(){
 
-    let investmentData = {};
+    let investmentData = [];
 
     // Grab values from form
     let initialInvestment = Number(document.getElementById("initial-investment").value);
@@ -85,22 +85,22 @@ function Calculate(){
     let timeRange = d3.timeMonth.range(start, end);
 
     for(i = 0; i < timeRange.length; i++){
-        let monthKey = formatTime(timeRange[i]);
-        investmentData[monthKey] = {};
+
+        // Is dit overbodig?
+        investmentData[i] = {};
 
         // Setting variables beforehand
-        // let saved = initialInvestment + monthlyContribution * (i+1);
         let interest = 0;
         let total = 0;
         let totalPrevMonth = 0;
 
         try {
             // Get prev month total if it exists
-            totalPrevMonth = investmentData[formatTime(timeRange[i-1])].total
+            totalPrevMonth = investmentData[i-1].total;
         }
         catch (error) {
             // Set total prev month to initial investment (only happens on 1st month)
-            totalPrevMonth = initialInvestment
+            totalPrevMonth = initialInvestment;
         }
 
         // Monthly interest 
@@ -119,21 +119,73 @@ function Calculate(){
         total = totalPrevMonth + monthlyContribution + interest;
 
         let obj = {
+            unixtime: timeRange[i].getTime(),
             saved: initialInvestment + monthlyContribution * (i+1),
             interest: interest,
             total: total,
         }
-
-        investmentData[monthKey] = obj;
-       
+        investmentData[i] = obj;
     }
-    console.log(investmentData)
+
+    console.log(investmentData);
 
     // Beetje scuffed tooltip prototype
     let result = document.getElementById("result");
-    result.innerHTML = `Total: ${investmentData[formatTime(timeRange[timeRange.length-1])].total}<br/>
-        Saved: ${investmentData[formatTime(timeRange[timeRange.length-1])].saved}<br/>
-        Total interest: ${investmentData[formatTime(timeRange[timeRange.length-1])].total - investmentData[formatTime(timeRange[timeRange.length-1])].saved}`
+    result.innerHTML = `Total: ${investmentData[investmentData.length-1].total}<br/>
+        Saved: ${investmentData[investmentData.length-1].saved}<br/>
+        Total interest: ${investmentData[investmentData.length-1].total - investmentData[investmentData.length-1].saved}`;
 
-    
+
+    // x scale based on time
+    let x = d3.scaleTime()
+    .domain(d3.extent(investmentData, function(d) {
+        return parseTime(+d.unixtime); 
+    }))
+    .range([ 0, width ]);
+
+    // appending a bottom axis at x: 0, y: height
+    group.append("g")
+        .attr("transform", "translate(0," + height + ")")  
+        .call(d3.axisBottom(x));
+
+    // We save the min and max value of our closing price data, 'close', for later use below.
+    let yScaleDomain = d3.extent(investmentData, function(d) {
+        return +d.total; 
+    });
+
+    // to give our line 10 pixels padding, we will manipulate our scale domain, adding 10 to the max and min expected values. 
+    let yScalePadding = 10;
+    let y = d3.scaleLinear()
+        .domain([yScaleDomain[0] - yScalePadding, yScaleDomain[1] + yScalePadding])
+        .range([ height, 0 ]);
+
+    // appending a left axis at x: 0, y: 0
+    group.append("g")
+    .attr("transform", "translate(0,0)")  
+    .call(d3.axisLeft(y));
+
+    // append a grid-line
+    let gridLine = group.append("line")
+        .attr("y1", y.range()[1])
+        .attr("y2", y.range()[0])
+        .attr("class", "grid-line");
+
+    // line function to parse our time and close datapoints through our scales
+    const valueline = d3.line()
+        .x(function(d) { return x(parseTime(+d.unixtime)); })
+        .y(function(d) { return y(d.total); });
+
+    // append a path to the group, call the data(), call the valueline on that data withtin our d attribute
+    // group.append("path")
+    //     .data([investmentData.filter(function(d, i) {
+    //         return i % Math.floor(investmentData.length / 1) == 0;
+    //     })])
+    //     .attr("class", "line")
+    //     .attr("d", valueline);
+
+    group.append("path")
+        .data([investmentData])
+        .attr("class", "line")
+        .attr("d", valueline);
+        
 }
