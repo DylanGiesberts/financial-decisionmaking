@@ -79,8 +79,7 @@ function Calculate(){
     let now = new Date();
     // Set start to 1st of next month
     let start = new Date(now.getFullYear(), now.getMonth() + 1, 1)
-    let end = new Date(start.getFullYear() + 1 * interestYears, start.getMonth(), 1)
-    //let end = start.valueOf() + (31536000000 * interestYears);
+    let end = new Date(start.getFullYear() + interestYears, start.getMonth(), 1)
     // Set up d3 timerange
     let timeRange = d3.timeMonth.range(start, end);
 
@@ -117,13 +116,18 @@ function Calculate(){
         investmentData[i] = obj;
     }
 
-    console.log(investmentData);
-
     // eindwaardes (beetje scuffed?)
     let result = document.getElementById("result");
     result.innerHTML = `Total: ${investmentData[investmentData.length-1].total}<br/>
         Saved: ${investmentData[investmentData.length-1].saved}<br/>
         Total interest: ${investmentData[investmentData.length-1].total - investmentData[investmentData.length-1].saved}`;
+
+    
+    // Remove old graph
+    d3.select("#totalline").remove();
+    d3.select("#savedline").remove();
+    d3.select("#x-axis").remove();
+    d3.select("#y-axis").remove();
 
 
     // x scale based on time
@@ -137,7 +141,8 @@ function Calculate(){
 
     // appending a bottom axis at x: 0, y: height
     group.append("g")
-        .attr("transform", "translate(0," + height + ")")  
+        .attr("transform", "translate(0," + height + ")")
+        .attr("id", "x-axis")
         .call(d3.axisBottom(x));
 
     // We save the min and max value of our closing price data, 'close', for later use below.
@@ -153,7 +158,8 @@ function Calculate(){
 
     // appending a left axis at x: 0, y: 0
     group.append("g")
-    .attr("transform", "translate(0,0)")  
+    .attr("transform", "translate(0,0)")
+    .attr("id", "y-axis")
     .call(d3.axisLeft(y));
 
     // append a grid-line
