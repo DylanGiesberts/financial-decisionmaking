@@ -1,7 +1,7 @@
 
 // set the dimensions and margins of the graph
 const margin = {top: 20, right: 20, bottom: 30, left: 50},
-    width = 960 - margin.left - margin.right,
+    width = my_dataviz.clientWidth - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
 
@@ -161,25 +161,25 @@ function Calculate(){
         .attr("class", "grid-line");
 
     // line function to parse our time and close datapoints through our scales
-    const valueline = d3.line()
-    //  d3["curveCardinal curveLinear curveBasis curveStep curveNatural"] 
-    //  d3.curveMonotoneX curveMonotoneY d3.curveBundle.beta(0.5)
+    const totalline = d3.line()
         .x(function(d) { return x(parseTime(+d.unixtime)); })
         .y(function(d) { return y(d.total); });
 
-    // append a path to the group, call the data(), call the valueline on that data withtin our d attribute
-    // group.append("path")
-    //     .data([investmentData.filter(function(d, i) {
-    //         return i % Math.floor(investmentData.length / 1) == 0;
-    //     })])
-    //     .attr("class", "line")
-    //     .attr("d", valueline);
+    const savedline = d3.line()
+        .x(function(d) { return x(parseTime(+d.unixtime)); })
+        .y(function(d) { return y(d.saved); });
 
-    console.log("path")
     group.append("path")
         .data([investmentData])
+        .attr("id", "totalline")
         .attr("class", "line")
-        .attr("d", valueline);
+        .attr("d", totalline);
+
+    group.append("path")
+        .data([investmentData])
+        .attr("id", "savedline")
+        .attr("class", "line")
+        .attr("d", savedline);
 
     view.on("mouseout", function() {
         gridLine.style("opacity", 0);
