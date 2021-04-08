@@ -49,7 +49,6 @@ function ValidateForm() {
     let monthlyContribution = document.getElementById("monthly-contribution").value;
     let interestRate = document.getElementById("interest-rate").value;
     let interestYears = document.getElementById("interest-years").value;
-    let compoundsMonthly = document.getElementById("compound-frequency").value;
 
     // Check values
     try {
@@ -57,7 +56,6 @@ function ValidateForm() {
         monthlyContribution = Number(monthlyContribution);
         interestRate = Number(interestRate);
         interestYears = Number(interestYears);
-        compoundsMonthly = Number(compoundsMonthly);
     }
     catch (error) {
         
@@ -73,15 +71,15 @@ function Calculate(){
     let monthlyContribution = Number(document.getElementById("monthly-contribution").value);
     let interestRate = Number(document.getElementById("interest-rate").value)/100;
     let interestYears = Number(document.getElementById("interest-years").value);
-    let compoundsMonthly = Boolean(Number(document.getElementById("compound-frequency").value));
 
 
-    // Scuffed volgens stackoverflow maar date.now werkt niet?
     // Get current date
-    let start = +new Date;
-    // 31,556,926 seconds in a year, 31,556,926,000 milliseconds (javascript uses milliseconds)
-    let end = start + (31556926000 * interestYears);
-    // Set up d3 timerange based on unix time
+    let now = new Date();
+    // Set start to 1st of next month
+    let start = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+    let end = new Date(start.getFullYear() + 1 * interestYears, start.getMonth(), 1)
+    //let end = start.valueOf() + (31536000000 * interestYears);
+    // Set up d3 timerange
     let timeRange = d3.timeMonth.range(start, end);
 
     for(i = 0; i < timeRange.length; i++){
@@ -104,17 +102,7 @@ function Calculate(){
         }
 
         // Monthly interest 
-        if (compoundsMonthly) {
-            interest = totalPrevMonth * (interestRate / 12);
-        }
-
-        // Yearly interest
-        else {
-            // Check if month is january
-            if (timeRange[i].getMonth() == 0) {
-                interest = totalPrevMonth * interestRate;
-            }
-        }
+        interest = totalPrevMonth * (interestRate / 12);
 
         total = totalPrevMonth + monthlyContribution + interest;
 
@@ -129,7 +117,7 @@ function Calculate(){
 
     console.log(investmentData);
 
-    // Beetje scuffed tooltip prototype
+    // eindwaardes (beetje scuffed?)
     let result = document.getElementById("result");
     result.innerHTML = `Total: ${investmentData[investmentData.length-1].total}<br/>
         Saved: ${investmentData[investmentData.length-1].saved}<br/>
@@ -139,6 +127,8 @@ function Calculate(){
     // x scale based on time
     let x = d3.scaleTime()
     .domain(d3.extent(investmentData, function(d) {
+        // if (compoundsMonthly) { return 01-xx-20xx }?
+        // else { return 01-01-20xx }?
         return parseTime(+d.unixtime); 
     }))
     .range([ 0, width ]);
@@ -185,6 +175,7 @@ function Calculate(){
     //     .attr("class", "line")
     //     .attr("d", valueline);
 
+    console.log("path")
     group.append("path")
         .data([investmentData])
         .attr("class", "line")
@@ -199,8 +190,6 @@ function Calculate(){
         tooltip.style("opacity", 1);
     })
     .on("mousemove", function() {
-
-        let xCoord = d3.pointer(event,this)[0];
         // invert the x coordinate to turn it back into a date object
         let x0 = x.invert(d3.pointer(event,this)[0])
 
