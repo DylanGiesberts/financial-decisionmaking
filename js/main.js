@@ -1,6 +1,7 @@
 
 // set the dimensions and margins of the graph
 const margin = {top: 20, right: 20, bottom: 30, left: 50},
+    // Get width from browser
     width = my_dataviz.clientWidth - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
@@ -22,7 +23,8 @@ let group = svg.append("g")
 // create a view rect to handle all mouse events
 let view = group.append("rect")
     .attr("id", "viewport")
-    .attr("width", width)
+    // -1 width to fix undefined values
+    .attr("width", width-1)
     .attr("height", height)
     .attr("x", 0)
     .attr("y", 0)
