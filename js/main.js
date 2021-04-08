@@ -172,6 +172,8 @@ function Calculate(){
 
     // line function to parse our time and close datapoints through our scales
     const valueline = d3.line()
+    //  d3["curveCardinal curveLinear curveBasis curveStep curveNatural"] 
+    //  d3.curveMonotoneX curveMonotoneY d3.curveBundle.beta(0.5)
         .x(function(d) { return x(parseTime(+d.unixtime)); })
         .y(function(d) { return y(d.total); });
 
@@ -187,5 +189,34 @@ function Calculate(){
         .data([investmentData])
         .attr("class", "line")
         .attr("d", valueline);
+
+    view.on("mouseout", function() {
+        gridLine.style("opacity", 0);
+        tooltip.style("opacity", 0);
+    })
+    .on("mouseover", function() {
+        gridLine.style("opacity", 1);
+        tooltip.style("opacity", 1);
+    })
+    .on("mousemove", function() {
+
+        let xCoord = d3.pointer(event,this)[0];
+        // invert the x coordinate to turn it back into a date object
+        let x0 = x.invert(d3.pointer(event,this)[0])
+
+        // create a bisector to get the index of our date
+        let bisectDate = d3.bisector(function(d) { return parseTime(+d.unixtime) }).right;
+
+        // call the bisector to get our index
+        i = bisectDate(investmentData, x0);
+        
+        tooltip.html("time: " + formatTime(x0) + 
+            "<br/>total: " + investmentData[i].total + 
+            "<br/>saved: " + investmentData[i].saved)
+            .style("left", (event.pageX) + 12 + "px")
+            .style("top", (event.pageY - 28) + "px");
+        
+        gridLine.attr("x1", d3.pointer(event,this)[0]).attr("x2", d3.pointer(event,this)[0]);
+    });
         
 }
