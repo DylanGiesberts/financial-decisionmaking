@@ -24,6 +24,10 @@ option {
     color: black;
 }
 
+.col-form-label {
+    text-align: center;
+}
+
 .line {
     fill: none;
 }
@@ -34,6 +38,14 @@ option {
 
 #savedline {
     stroke: blue;
+}
+
+#totalebevolkingline {
+    stroke: cyan;
+}
+
+#pensioenline {
+    stroke: darkblue;
 }
 
 .tooltip {

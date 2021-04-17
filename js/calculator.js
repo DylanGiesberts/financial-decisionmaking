@@ -37,11 +37,6 @@ let calculatortooltip = d3.select("#calculator")
     .style("opacity", 0)
     .attr("class", "tooltip");
 
-// to parse Unix epoch to new Date object
-const parseTime = d3.timeParse("%Q");
-
-// to parse Date object to a more readable format
-const formatTime = d3.timeFormat("%d-%m-%Y %H:%M");
 
 document.getElementById("calculate").onclick = Calculate;
 
