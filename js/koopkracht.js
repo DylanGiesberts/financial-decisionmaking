@@ -1,9 +1,13 @@
 
 // set the dimensions and koopkrachtmargins of the graph
-const koopkrachtmargin = {top: 20, right: 20, bottom: 30, left: 50},
+let koopkrachtmargin = {top: 20, right: 20, bottom: 30, left: 50},
     // Get width from browser
     koopkrachtwidth = koopkracht.clientWidth - koopkrachtmargin.left - koopkrachtmargin.right,
     koopkrachtheight = 500 - koopkrachtmargin.top - koopkrachtmargin.bottom;
+
+if (koopkracht.clientWidth < 500) {
+    koopkrachtwidth = 400;
+}
 
 
 // append the svg object to the body of the page
@@ -45,26 +49,11 @@ const formatTime = d3.timeFormat("%d-%m-%Y %H:%M");
 
 (async function() {
     let koopkrachtData = await d3.csv("../data/Koopkrachtontwikkeling.csv")
-    console.log(koopkrachtData);
 
     let koopkrachtstart = new Date(koopkrachtData[0].jaar, 0, 0);
     let koopkrachtend = new Date(koopkrachtData.slice(-1)[0].jaar, 1, 1);
 
     let koopkrachttimeRange = d3.timeYear.range(koopkrachtstart, koopkrachtend);
-
-    // for (i = 0; i < koopkrachttimeRange.length; i++) {
-
-    //     let obj = {
-    //         unixtime: koopkrachttimeRange[i].getTime(),
-    //         jaar: koopkrachttimeRange[i].jaar,
-    //         totaleBevolking: koopkrachttimeRange[i].totaleBevolking,
-    //         gepensioneerden: koopkrachttimeRange[i].gepensioneerden
-    //     }
-        
-    //     koopkrachttimeRange[i] = obj;
-    //     console.log(obj);
-    // }
-    // console.log(koopkrachtData);
 
     // x scale based on time
     let koopkrachtx = d3.scaleTime()
@@ -135,12 +124,14 @@ const formatTime = d3.timeFormat("%d-%m-%Y %H:%M");
     .on("mousemove", function() {
         // invert the x coordinate to turn it back into a date object
         let x0 = koopkrachtx.invert(d3.pointer(event,this)[0])
+        console.log(x0);
 
         // create a bisector to get the index of our date
         let bisectDate = d3.bisector(function(d) { return +parseTime(+new Date(d.jaar,1,1)) }).right;
 
         // call the bisector to get our index
         i = bisectDate(koopkrachtData, x0);
+        console.log(i);
         
         koopkrachttooltip.html("time: " + x0 + 
             "<br/>Totale bevolking: " + koopkrachtData[i].totaleBevolking + 

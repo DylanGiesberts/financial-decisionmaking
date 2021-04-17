@@ -1,11 +1,15 @@
 
 // set the dimensions and bevolkingmargins of the graph
-const bevolkingmargin = {top: 20, right: 20, bottom: 30, left: 50},
+let bevolkingmargin = {top: 20, right: 20, bottom: 30, left: 50},
     // Get width from browser
     bevolkingwidth = bevolking.clientWidth - bevolkingmargin.left - bevolkingmargin.right,
     bevolkingheight = 500 - bevolkingmargin.top - bevolkingmargin.bottom;
 
+if (bevolking.clientWidth < 500) {
+    bevolkingwidth = 400;
+}
 
+const color = ["lightgreen", "green", "lightblue", "blue", "lightgreen", "green", "lightblue", "blue"];
 // append the svg object to the body of the page
 let bevolkingsvg = d3.select("#bevolking")
     .append("svg")
@@ -39,6 +43,85 @@ let bevolkingtooltip = d3.select("#bevolking")
 
 (async function(){
     let bevolkingData = await d3.csv("../data/Bevolking.csv")
-    console.log(bevolkingData);
 
+    const stack = d3.stack().keys(["0-20", "20-65", "65-80", "80+", "0-20p", "20-65p", "65-80p", "80+p"]);
+    const stackedValues = stack(bevolkingData);
+    const stackedData = [];
+
+    // Copy the stack offsets back into the data.
+    stackedValues.forEach((layer, index) => {
+        const currentStack = [];
+        layer.forEach((d, i) => {
+        currentStack.push({
+            values: d,
+            year: bevolkingData[i].jaar
+        });
+        });
+        stackedData.push(currentStack);
+    });
+
+    const yScale = d3.scaleLinear()
+        .range([bevolkingheight, 0])
+        .domain([0, d3.max(stackedValues[stackedValues.length - 1], dp => dp[1])]);
+
+    const xScale = d3.scaleLinear()
+        .range([0, bevolkingwidth])
+        .domain(d3.extent(bevolkingData, d => d.jaar));
+
+    const area = d3.area()
+        .x(d => xScale(d.year))
+        .y0(d => yScale(d.values[0]))
+        .y1(d => yScale(d.values[1]));
+
+    const series = bevolkinggroup.selectAll(".series")
+        .data(stackedData)
+        .enter()
+        .append("g")
+        .attr("class", "series");
+
+    series.append("path")
+        .style("fill", (d, i) => color[i])
+        .attr("stroke", "steelblue")
+        .attr("stroke-linejoin", "round")
+        .attr("stroke-linecap", "round")
+        .attr("stroke-width", "1.5")
+        .attr("d", d => area(d));
+
+    // Add the X Axis
+    bevolkinggroup.append("g")
+        .attr("transform", `translate(0,${bevolkingheight})`)
+        .call(d3.axisBottom(xScale));
+
+    // Add the Y Axis
+    bevolkinggroup.append("g")
+        .attr("transform", `translate(0, 0)`)
+        .call(d3.axisLeft(yScale)); 
+    
+    bevolkingview.on("mouseout", function() {
+        bevolkingtooltip.style("opacity", 0);
+    })
+    .on("mouseover", function() {
+        bevolkingtooltip.style("opacity", 1);
+    })
+    .on("mousemove", function() {
+
+    let x0 = Math.round(xScale.invert(d3.pointer(event, this)[0]));
+    // console.log(x0);
+    // console.log(xScale.invert(d3.pointer(event, this)[0]));
+    // console.log(Math.round(xScale.invert(d3.pointer(event, this)[0])));
+
+    let bisectDate = d3.bisector(function(d) { 
+        // console.log(+parseTime(+new Date(d.jaar,1,1)).left);
+        // console.log(+parseTime(+new Date(d.jaar,1,1)).right);
+        return +parseTime(+new Date(d.jaar,1,1)) }).left;
+    
+
+    i = bisectDate(bevolkingData, x0);
+    // console.log(i);
+
+    bevolkingtooltip.html("time: " + bevolkingData[i].jaar)
+
+
+    });
+    
 })();
