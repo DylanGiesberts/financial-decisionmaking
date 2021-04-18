@@ -16,13 +16,33 @@
 
         <div class="row mb-3">
             <div class="col sm-3">
-                <p>koopkracht</p>
+                <p class="display-6 text-center">Koopkracht</p>
+                <p class="text-center">Koopkracht van gepensioneerden en de totale bevolking tussen 2008 en 2017.</p>
+                <p><small>2008 = 100</small></p>
                 <div id="koopkracht"></div>
             </div>
             <div class="col sm-3">
-                <p>bevolking</p>
+                <p class="display-6 text-center">Bevolking</p>
+                <p class="text-center">Bevolking op 1 januari naar leeftijd.</p>
+                <p class="text-center"><small>Prognose is een verwachting en kan incorrect zijn</small></p>
                 <div id="bevolking"></div>
             </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col sm-3">
+                <p><small>Bron: <a class="link-secondary" href="https://www.cbs.nl/nl-nl/achtergrond/2019/27/welvaart-van-gepensioneerden">Welvaart van gepensioneerden</a>, CBS</small></p>
+            </div>
+            <div class="col sm-3">
+                <p><small>Bron: <a class="link-secondary" href="https://www.cbs.nl/nl-nl/nieuws/2020/51/prognose-bevolking-blijft-komende-50-jaar-groeien">Prognose: Bevolking blijft komende 50 jaar groeien</a>, CBS</small></p>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <p class="display-6 text-center">Beleggen</p>
+            <p class="text-center">Ben je geïnteresseerd in beleggen? Gebruik dan deze handige calculator.</p>
+            <p class="text-center">Deze calculator gebruikt samengestelde rente. Ookwel bekend als rente op rente.</p>
+            <p class="text-center"><small>Let op: Beleggen is risicovol, je kan (een gedeelte van) je inleg verliezen.</small></p>
         </div>
 
         <div class="row mb-3">
@@ -37,7 +57,7 @@
 
         
         <div class="row mb-3">
-            <label for="monthly-contribution" class="col-sm-3 col-form-label">Maandelijkse Bijlage</label>
+            <label for="monthly-contribution" class="col-sm-3 col-form-label">Maandelijkse bijlage</label>
             <div class="col-sm-9">
                 <div class="input-group">
                     <span class="input-group-text">€</span>
@@ -50,7 +70,7 @@
             <label for="interest-rate" class="col-sm-3 col-form-label">Jaarlijkse rente</label>
             <div class="col-sm-9">
                 <div class="input-group">
-                    <input type="number" step=".1" min="0" max="100" id="interest-rate" class="form-control" placeholder="Rente" aria-label="Interest rate">
+                    <input type="number" step=".1" min="0" max="100" id="interest-rate" class="form-control" placeholder="5.5" aria-label="Interest rate">
                     <span class="input-group-text">%</span>
                 </div>
             </div>
@@ -59,7 +79,7 @@
         <div class="row mb-3">
             <label for="interest-years" class="col-sm-3 col-form-label">Jaren tot pensioen</label>
             <div class="col-sm-9">
-                <input type="number" step="1" min="0" max="100" id="interest-years" class="form-control" placeholder="Aantal jaren" aria-label="interest years">
+                <input type="number" step="1" min="0" max="100" id="interest-years" class="form-control" placeholder="30" aria-label="interest years">
             </div>
         </div>
 
