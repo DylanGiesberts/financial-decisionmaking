@@ -6,7 +6,7 @@ let koopkrachtmargin = {top: 20, right: 20, bottom: 30, left: 50},
     koopkrachtheight = 500 - koopkrachtmargin.top - koopkrachtmargin.bottom;
 
 if (koopkracht.clientWidth < 500) {
-    koopkrachtwidth = 500;
+    koopkrachtwidth = screen.width;
 }
 
 

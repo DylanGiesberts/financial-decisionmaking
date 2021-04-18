@@ -6,7 +6,7 @@ let bevolkingmargin = {top: 20, right: 20, bottom: 30, left: 50},
     bevolkingheight = 500 - bevolkingmargin.top - bevolkingmargin.bottom;
 
 if (bevolking.clientWidth < 500) {
-    bevolkingwidth = 500;
+    bevolkingwidth = screen.width;
 }
 
 const color = ["hsl(120, 73.4%, 74.9%)", "hsl(120, 60.8%, 50%)",

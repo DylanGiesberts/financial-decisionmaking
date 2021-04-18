@@ -1,10 +1,13 @@
 
 // set the dimensions and calculatormargins of the graph
-const calculatormargin = {top: 20, right: 20, bottom: 30, left: 50},
+let calculatormargin = {top: 20, right: 20, bottom: 30, left: 50},
     // Get width from browser
     calculatorwidth = calculator.clientWidth - calculatormargin.left - calculatormargin.right,
     calculatorheight = 500 - calculatormargin.top - calculatormargin.bottom;
 
+if (calculatorheight.clientWidth < 500) {
+    calculatorwidth = screen.width;
+}
 
 
 document.getElementById("calculate").onclick = Calculate;
