@@ -98,11 +98,11 @@ function Calculate(){
         maximumFractionDigits: 2
     })
 
-    // eindwaardes (beetje scuffed?)
+    // eindwaardes
     let result = document.getElementById("result");
-    result.innerHTML = `Total: ${investmentData[investmentData.length-1].total}<br/>
-        Saved: ${investmentData[investmentData.length-1].saved}<br/>
-        Total interest: ${investmentData[investmentData.length-1].total - investmentData[investmentData.length-1].saved}`;
+    result.innerHTML = `<p class='h4 text-center'>in ${interestYears} jaar heb je ${eurFormat.format(investmentData[investmentData.length-1].total)}
+        <br/>Je totale inleg is ${eurFormat.format(investmentData[investmentData.length-1].saved)}
+        <br/>En je verwachte totale rendement is ${eurFormat.format(investmentData[investmentData.length-1].total - investmentData[investmentData.length-1].saved)}</p>`
 
     
     // Remove old graph
