@@ -67,11 +67,10 @@ let bevolkingtooltip = d3.select("#bevolking")
     const xScale = d3.scaleTime()
         .range([0, bevolkingwidth])
         .domain(d3.extent(bevolkingData, function(d) {
-            return parseTime(+new Date(d.jaar, 0, 1));
+            return new Date(d.jaar, 0, 1);
         }));
 
     const area = d3.area()
-        // .x(d => xScale(d.year))
         .x(function(d) { return xScale(new Date(d.year, 0, 1)) })
         .y0(function(d) { return yScale(d.values[0]); })
         .y1(function(d) { return yScale(d.values[1]); });
@@ -83,10 +82,6 @@ let bevolkingtooltip = d3.select("#bevolking")
         .attr("class", "series");
 
     series.append("path")
-        // Perfecte append voor 1903x1345 (fullscreen chrome)
-        // .attr("transform", `translate(121,0)`) 
-        // Dit transformt niet ver genoeg?
-        .attr("transform", `translate(${bevolkingmargin.left},0)`)
         .style("fill", (d, i) => color[i])
         .attr("stroke", "steelblue")
         .attr("stroke-linejoin", "round")
@@ -112,7 +107,14 @@ let bevolkingtooltip = d3.select("#bevolking")
     })
     .on("mousemove", function() {
 
-   
+        let x0 = xScale.invert(d3.pointer(event, this)[0]);
+        
+        let bisectDate = d3.bisector(function(d) { return new Date(d.jaar,1,1); }).right;
+
+        i = bisectDate(bevolkingData, x0);
+
+        bevolkingtooltip.html("time: " + x0 +
+        "<br/>0-20: " + bevolkingData[i]["0-20"]);
 
 
     });
