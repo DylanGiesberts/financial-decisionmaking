@@ -53,7 +53,7 @@ const formatTime = d3.timeFormat("%d-%m-%Y %H:%M");
     let koopkrachtstart = new Date(koopkrachtData[0].jaar, 0, 0);
     let koopkrachtend = new Date(koopkrachtData.slice(-1)[0].jaar, 1, 1);
 
-    let koopkrachttimeRange = d3.timeYear.range(koopkrachtstart, koopkrachtend);
+    // let koopkrachttimeRange = d3.timeYear.range(koopkrachtstart, koopkrachtend);
 
     // x scale based on time
     let koopkrachtx = d3.scaleTime()
@@ -124,14 +124,12 @@ const formatTime = d3.timeFormat("%d-%m-%Y %H:%M");
     .on("mousemove", function() {
         // invert the x coordinate to turn it back into a date object
         let x0 = koopkrachtx.invert(d3.pointer(event,this)[0])
-        console.log(x0);
 
         // create a bisector to get the index of our date
         let bisectDate = d3.bisector(function(d) { return +parseTime(+new Date(d.jaar,1,1)) }).right;
 
         // call the bisector to get our index
         i = bisectDate(koopkrachtData, x0);
-        console.log(i);
         
         koopkrachttooltip.html("time: " + x0 + 
             "<br/>Totale bevolking: " + koopkrachtData[i].totaleBevolking + 

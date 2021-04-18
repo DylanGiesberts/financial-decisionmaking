@@ -64,14 +64,17 @@ let bevolkingtooltip = d3.select("#bevolking")
         .range([bevolkingheight, 0])
         .domain([0, d3.max(stackedValues[stackedValues.length - 1], dp => dp[1])]);
 
-    const xScale = d3.scaleLinear()
+    const xScale = d3.scaleTime()
         .range([0, bevolkingwidth])
-        .domain(d3.extent(bevolkingData, d => d.jaar));
+        .domain(d3.extent(bevolkingData, function(d) {
+            return parseTime(+new Date(d.jaar, 0, 1));
+        }));
 
     const area = d3.area()
-        .x(d => xScale(d.year))
-        .y0(d => yScale(d.values[0]))
-        .y1(d => yScale(d.values[1]));
+        // .x(d => xScale(d.year))
+        .x(function(d) { return xScale(new Date(d.year, 0, 1)) })
+        .y0(function(d) { return yScale(d.values[0]); })
+        .y1(function(d) { return yScale(d.values[1]); });
 
     const series = bevolkinggroup.selectAll(".series")
         .data(stackedData)
@@ -80,6 +83,10 @@ let bevolkingtooltip = d3.select("#bevolking")
         .attr("class", "series");
 
     series.append("path")
+        // Perfecte append voor 1903x1345 (fullscreen chrome)
+        // .attr("transform", `translate(121,0)`) 
+        // Dit transformt niet ver genoeg?
+        .attr("transform", `translate(${bevolkingmargin.left},0)`)
         .style("fill", (d, i) => color[i])
         .attr("stroke", "steelblue")
         .attr("stroke-linejoin", "round")
@@ -105,21 +112,7 @@ let bevolkingtooltip = d3.select("#bevolking")
     })
     .on("mousemove", function() {
 
-    let x0 = Math.round(xScale.invert(d3.pointer(event, this)[0]));
-    // console.log(x0);
-    // console.log(xScale.invert(d3.pointer(event, this)[0]));
-    // console.log(Math.round(xScale.invert(d3.pointer(event, this)[0])));
-
-    let bisectDate = d3.bisector(function(d) { 
-        // console.log(+parseTime(+new Date(d.jaar,1,1)).left);
-        // console.log(+parseTime(+new Date(d.jaar,1,1)).right);
-        return +parseTime(+new Date(d.jaar,1,1)) }).left;
-    
-
-    i = bisectDate(bevolkingData, x0);
-    // console.log(i);
-
-    bevolkingtooltip.html("time: " + bevolkingData[i].jaar)
+   
 
 
     });
