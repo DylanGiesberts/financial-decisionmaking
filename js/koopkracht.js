@@ -6,7 +6,7 @@ let koopkrachtmargin = {top: 20, right: 20, bottom: 30, left: 50},
     koopkrachtheight = 500 - koopkrachtmargin.top - koopkrachtmargin.bottom;
 
 if (koopkracht.clientWidth < 500) {
-    koopkrachtwidth = 400;
+    koopkrachtwidth = 500;
 }
 
 
@@ -45,6 +45,15 @@ const parseTime = d3.timeParse("%Q");
 
 // to parse Date object to a more readable format
 const formatTime = d3.timeFormat("%d-%m-%Y %H:%M");
+
+// format to date
+const formatDate = d3.timeFormat("%d-%m-%Y");
+
+// Parse to month, year
+const formatMonth = d3.timeFormat("%m-%Y");
+
+// parse to year only
+const formatYear = d3.timeFormat("%Y");
 
 
 (async function() {
@@ -131,7 +140,7 @@ const formatTime = d3.timeFormat("%d-%m-%Y %H:%M");
         // call the bisector to get our index
         i = bisectDate(koopkrachtData, x0);
         
-        koopkrachttooltip.html("time: " + x0 + 
+        koopkrachttooltip.html("time: " + formatYear(x0) + 
             "<br/>Totale bevolking: " + koopkrachtData[i].totaleBevolking + 
             "<br/>Gepensioneerden: " + koopkrachtData[i].gepensioneerden)
             .style("left", (event.pageX) + 12 + "px")

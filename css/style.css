@@ -65,6 +65,58 @@ option {
     pointer-events: none;
 }
 
+.prognose-rect {
+    fill: white;
+    pointer-events: none;
+}
+
+.prognose-line {
+    stroke: black;
+    stroke-dasharray: 4;
+    stroke-width: 1;
+    opacity: 1;
+    pointer-events: none;
+}
+
 path {
     pointer-events: none;
+}
+
+.box {
+    position: relative;
+    margin-left: 20px;
+}
+.box:before{
+    position: absolute;
+    left: -20px;
+    top: 3px;
+    content: "";
+    height:15px;
+    width:15px;
+    margin-bottom:15px;
+    border:1px solid black;
+}
+.box.box-0-20:before {
+    background-color: hsl(120, 73.4%, 74.9%);
+}
+.box.box-20-65:before {
+    background-color: hsl(120, 60.8%, 50%);
+}
+.box.box-65-80:before {
+    background-color: hsl(10, 100%, 65%);
+}
+.box.box-80plus:before{
+    background-color: hsl(0, 100%, 50%);
+}
+.box.box-0-20p:before {
+    background-color: hsl(120, 73.4%, 85%);
+}
+.box.box-20-65p:before {
+    background-color: hsl(120, 60.8%, 60%);
+}
+.box.box-65-80p:before {
+    background-color: hsl(10, 100%, 75%);
+}
+.box.box-80plusp:before{
+    background-color: hsl(0, 100%, 65%);
 }

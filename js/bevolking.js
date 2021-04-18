@@ -6,10 +6,13 @@ let bevolkingmargin = {top: 20, right: 20, bottom: 30, left: 50},
     bevolkingheight = 500 - bevolkingmargin.top - bevolkingmargin.bottom;
 
 if (bevolking.clientWidth < 500) {
-    bevolkingwidth = 400;
+    bevolkingwidth = 500;
 }
 
-const color = ["lightgreen", "green", "lightblue", "blue", "lightgreen", "green", "lightblue", "blue"];
+const color = ["hsl(120, 73.4%, 74.9%)", "hsl(120, 60.8%, 50%)",
+    "hsl(10, 100%, 65%)", "hsl(0, 100%, 50%)",
+    "hsl(120, 73.4%, 85%)", "hsl(120, 60.8%, 60%)",
+    "hsl(10, 100%, 75%)", "hsl(0, 100%, 65%)"];
 // append the svg object to the body of the page
 let bevolkingsvg = d3.select("#bevolking")
     .append("svg")
@@ -24,15 +27,23 @@ let bevolkinggroup = bevolkingsvg.append("g")
 
 
 // create a view rect to handle all mouse events
-let bevolkingview = bevolkinggroup.append("rect")
-    .attr("id", "viewport")
-    // -1 width to fix undefined values
-    .attr("width", bevolkingwidth-1)
+let bevolkingviewleft = bevolkinggroup.append("rect")
+    .attr("id", "viewportleft")
+    .attr("width", 0.585*bevolkingwidth)
     .attr("height", bevolkingheight)
     .attr("x", 0)
     .attr("y", 0)
     .attr("fill", "white")
     .style("pointer-events", "all");
+
+let bevolkingviewright = bevolkinggroup.append("rect")
+.attr("id", "viewportright")
+.attr("width", 0.415*bevolkingwidth)
+.attr("height", bevolkingheight)
+.attr("x", 0.585*bevolkingwidth)
+.attr("y", 0)
+.attr("fill", "white")
+.style("pointer-events", "all");
 
 // append an invisible tooltip div
 let bevolkingtooltip = d3.select("#bevolking")
@@ -83,10 +94,10 @@ let bevolkingtooltip = d3.select("#bevolking")
 
     series.append("path")
         .style("fill", (d, i) => color[i])
-        .attr("stroke", "steelblue")
+        .attr("stroke", "white")
         .attr("stroke-linejoin", "round")
         .attr("stroke-linecap", "round")
-        .attr("stroke-width", "1.5")
+        .attr("stroke-width", "1")
         .attr("d", d => area(d));
 
     // Add the X Axis
@@ -98,8 +109,31 @@ let bevolkingtooltip = d3.select("#bevolking")
     bevolkinggroup.append("g")
         .attr("transform", `translate(0, 0)`)
         .call(d3.axisLeft(yScale)); 
+
+    // Line at the prognose transition
+    let prognosetransition = bevolkinggroup.append("rect")
+        .attr("x", 0.582*bevolkingwidth)
+        .attr("y", 0)
+        .attr("height", bevolkingheight)
+        .attr("width", 6)
+        .attr("class", "prognose-rect")
+
+    bevolkinggroup.append("line")
+        .attr("x1", 0.5875*bevolkingwidth)
+        .attr("x2", 0.5875*bevolkingwidth)
+        .attr("y1", yScale.range()[1])
+        .attr("y2", yScale.range()[0])
+        .attr("class", "prognose-line");
+
+    bevolkinggroup.append("text")
+        .attr("x", 0.6*bevolkingwidth)
+        .attr("y", yScale.range()[1]+20)
+        .attr("stroke", "grey")
+        .attr("stroke-width", 0.5)
+        .style("font-size", 12)
+        .text("Prognose ->");
     
-    bevolkingview.on("mouseout", function() {
+    bevolkingviewleft.on("mouseout", function() {
         bevolkingtooltip.style("opacity", 0);
     })
     .on("mouseover", function() {
@@ -113,10 +147,38 @@ let bevolkingtooltip = d3.select("#bevolking")
 
         i = bisectDate(bevolkingData, x0);
 
-        bevolkingtooltip.html("time: " + x0 +
-        "<br/>0-20: " + bevolkingData[i]["0-20"]);
+        bevolkingtooltip.html(formatYear(x0) + "<b>" +
+        "<div class='box box-0-20'>0-20: " + bevolkingData[i]["0-20"] + " mln</div>" +
+        "<div class='box box-20-65'>20-65: " + bevolkingData[i]["20-65"] + " mln</div>" +
+        "<div class='box box-65-80'>65-80: " + bevolkingData[i]["65-80"] + " mln</div>" +
+        "<div class='box box-80plus'>80+: " + bevolkingData[i]["80+"] + " mln</div>"
+        + "</b>")
+            .style("left", (event.pageX) + 12 + "px")
+            .style("top", (event.pageY - 28) + "px");
+    });
 
+    bevolkingviewright.on("mouseout", function() {
+        bevolkingtooltip.style("opacity", 0);
+    })
+    .on("mouseover", function() {
+        bevolkingtooltip.style("opacity", 1);
+    })
+    .on("mousemove", function() {
 
+        let x0 = xScale.invert(d3.pointer(event, this)[0]);
+        
+        let bisectDate = d3.bisector(function(d) { return new Date(d.jaar,1,1); }).right;
+
+        i = bisectDate(bevolkingData, x0);
+
+        bevolkingtooltip.html(formatYear(x0) + "<b>" +
+        "<div class='box box-0-20p'>0-20 prognose: " + bevolkingData[i]["0-20p"] + " mln</div>" +
+        "<div class='box box-20-65p'>20-65 prognose: " + bevolkingData[i]["20-65p"] + " mln</div>" +
+        "<div class='box box-65-80p'>65-80 prognose: " + bevolkingData[i]["65-80p"] + " mln</div>" +
+        "<div class='box box-80plusp'>80+ prognose: " + bevolkingData[i]["80+p"] + " mln</div>"
+        + "</b>")
+            .style("left", (event.pageX) + 12 + "px")
+            .style("top", (event.pageY - 28) + "px");
     });
     
 })();
