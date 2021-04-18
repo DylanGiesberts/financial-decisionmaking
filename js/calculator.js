@@ -6,7 +6,7 @@ let calculatormargin = {top: 20, right: 20, bottom: 30, left: 50},
     calculatorheight = 500 - calculatormargin.top - calculatormargin.bottom;
 
 if (calculatorheight.clientWidth < 500) {
-    calculatorwidth = screen.width;
+    calculatorwidth = window.innerWidth;
 }
 
 
@@ -14,6 +14,10 @@ document.getElementById("calculate").onclick = Calculate;
 
 
 function Calculate(){
+
+    // Remove old svg
+    d3.select("#calculator").selectAll("svg").remove();
+    d3.select("#calculator").selectAll("div").remove();
 
     // append the svg object to the body of the page
     let calculatorsvg = d3.select("#calculator")
