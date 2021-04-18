@@ -48,7 +48,7 @@ const formatTime = d3.timeFormat("%d-%m-%Y %H:%M");
 
 
 (async function() {
-    let koopkrachtData = await d3.csv("/data/Koopkrachtontwikkeling.csv")
+    let koopkrachtData = await d3.csv("data/Koopkrachtontwikkeling.csv")
 
     let koopkrachtstart = new Date(koopkrachtData[0].jaar, 0, 0);
     let koopkrachtend = new Date(koopkrachtData.slice(-1)[0].jaar, 1, 1);
