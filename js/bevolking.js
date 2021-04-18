@@ -42,7 +42,7 @@ let bevolkingtooltip = d3.select("#bevolking")
 
 
 (async function(){
-    let bevolkingData = await d3.csv("../data/Bevolking.csv")
+    let bevolkingData = await d3.csv("/data/Bevolking.csv")
 
     const stack = d3.stack().keys(["0-20", "20-65", "65-80", "80+", "0-20p", "20-65p", "65-80p", "80+p"]);
     const stackedValues = stack(bevolkingData);
