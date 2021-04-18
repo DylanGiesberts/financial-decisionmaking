@@ -50,7 +50,7 @@ const formatTime = d3.timeFormat("%d-%m-%Y %H:%M");
 const formatDate = d3.timeFormat("%d-%m-%Y");
 
 // Parse to month, year
-const formatMonth = d3.timeFormat("%m-%Y");
+const formatMonth = d3.timeFormat("%B %Y");
 
 // parse to year only
 const formatYear = d3.timeFormat("%Y");
@@ -58,11 +58,6 @@ const formatYear = d3.timeFormat("%Y");
 
 (async function() {
     let koopkrachtData = await d3.csv("data/Koopkrachtontwikkeling.csv")
-
-    let koopkrachtstart = new Date(koopkrachtData[0].jaar, 0, 0);
-    let koopkrachtend = new Date(koopkrachtData.slice(-1)[0].jaar, 1, 1);
-
-    // let koopkrachttimeRange = d3.timeYear.range(koopkrachtstart, koopkrachtend);
 
     // x scale based on time
     let koopkrachtx = d3.scaleTime()
@@ -140,9 +135,10 @@ const formatYear = d3.timeFormat("%Y");
         // call the bisector to get our index
         i = bisectDate(koopkrachtData, x0);
         
-        koopkrachttooltip.html("time: " + formatYear(x0) + 
-            "<br/>Totale bevolking: " + koopkrachtData[i].totaleBevolking + 
-            "<br/>Gepensioneerden: " + koopkrachtData[i].gepensioneerden)
+        koopkrachttooltip.html(formatYear(x0) + "<b>" +
+            "<div class='box box-totaal'>Totale bevolking: " + koopkrachtData[i].totaleBevolking + "</div>" + 
+            "<div class='box box-gepensioneerden'>Gepensioneerden: " + koopkrachtData[i].gepensioneerden + "</div>"
+            + "</b>")
             .style("left", (event.pageX) + 12 + "px")
             .style("top", (event.pageY - 28) + "px");
         

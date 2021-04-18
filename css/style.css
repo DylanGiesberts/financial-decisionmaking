@@ -120,3 +120,15 @@ path {
 .box.box-80plusp:before{
     background-color: hsl(0, 100%, 65%);
 }
+.box.box-totaal:before {
+    background-color: cyan;
+}
+.box.box-gepensioneerden:before {
+    background-color: blue;
+}
+.box.box-total:before {
+    background-color: red;
+}
+.box.box-saved:before {
+    background-color: blue;
+}

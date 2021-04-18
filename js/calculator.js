@@ -7,21 +7,26 @@ const calculatormargin = {top: 20, right: 20, bottom: 30, left: 50},
 
 
 
-// append the svg object to the body of the page
-let calculatorsvg = d3.select("#calculator")
+document.getElementById("calculate").onclick = Calculate;
+
+
+function Calculate(){
+
+    // append the svg object to the body of the page
+    let calculatorsvg = d3.select("#calculator")
     .append("svg")
     .attr("width", calculatorwidth + calculatormargin.left + calculatormargin.right)
     .attr("height", calculatorheight + calculatormargin.top + calculatormargin.bottom);
 
 
-// append an svg group to the svg within the calculatormargins
-let calculatorgroup = calculatorsvg.append("g")
+    // append an svg group to the svg within the calculatormargins
+    let calculatorgroup = calculatorsvg.append("g")
     .style("pointer-events", "all")
     .attr("transform",
         "translate(" + calculatormargin.left + "," + calculatormargin.top + ")");
 
-// create a view rect to handle all mouse events
-let calculatorview = calculatorgroup.append("rect")
+    // create a view rect to handle all mouse events
+    let calculatorview = calculatorgroup.append("rect")
     .attr("id", "viewport")
     // -1 width to fix undefined values
     .attr("width", calculatorwidth-1)
@@ -31,35 +36,11 @@ let calculatorview = calculatorgroup.append("rect")
     .attr("fill", "white")
     .style("pointer-events", "all");
 
-// append an invisible tooltip div
-let calculatortooltip = d3.select("#calculator")
+    // append an invisible tooltip div
+    let calculatortooltip = d3.select("#calculator")
     .append("div")
     .style("opacity", 0)
     .attr("class", "tooltip");
-
-
-document.getElementById("calculate").onclick = Calculate;
-
-function ValidateForm() {
-    // Grab values from form
-    let initialInvestment = document.getElementById("initial-investment").value;
-    let monthlyContribution = document.getElementById("monthly-contribution").value;
-    let interestRate = document.getElementById("interest-rate").value;
-    let interestYears = document.getElementById("interest-years").value;
-
-    // Check values
-    try {
-        initialInvestment = Number(initialInvestment);
-        monthlyContribution = Number(monthlyContribution);
-        interestRate = Number(interestRate);
-        interestYears = Number(interestYears);
-    }
-    catch (error) {
-        
-    }
-}
-
-function Calculate(){
 
     let investmentData = [];
 
@@ -110,6 +91,12 @@ function Calculate(){
         }
         investmentData[i] = obj;
     }
+
+    const eurFormat = new Intl.NumberFormat('nl-NL', {
+        style: 'currency',
+        currency: 'EUR',
+        maximumFractionDigits: 2
+    })
 
     // eindwaardes (beetje scuffed?)
     let result = document.getElementById("result");
@@ -202,9 +189,10 @@ function Calculate(){
         // call the bisector to get our index
         i = bisectDate(investmentData, x0);
         
-        calculatortooltip.html("time: " + formatTime(x0) + 
-            "<br/>total: " + investmentData[i].total + 
-            "<br/>saved: " + investmentData[i].saved)
+        calculatortooltip.html("<b>Datum: " + formatMonth(x0) + 
+            "<div class='box box-total'>Toekomstige waarde: " + eurFormat.format(investmentData[i].total) + "</div>" +
+            "<div class='box box-saved'>Totale inleg: " + eurFormat.format(investmentData[i].saved)
+            + "</b>")
             .style("left", (event.pageX) + 12 + "px")
             .style("top", (event.pageY - 28) + "px");
         
