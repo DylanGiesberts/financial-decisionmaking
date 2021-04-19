@@ -50,7 +50,7 @@ const formatTime = d3.timeFormat("%d-%m-%Y %H:%M");
 const formatDate = d3.timeFormat("%d-%m-%Y");
 
 // Parse to month, year
-const formatMonth = d3.timeFormat("%B %Y");
+const formatMonth = d3.timeFormat("%b %Y");
 
 // parse to year only
 const formatYear = d3.timeFormat("%Y");
@@ -98,11 +98,11 @@ const formatYear = d3.timeFormat("%Y");
 
     // line function to parse our time and close datapoints through our scales
     const totalebevolkingline = d3.line()
-        .x(function(d) { return koopkrachtx(parseTime(+new Date(d.jaar, 1, 1))); })
+        .x(function(d) { return koopkrachtx(parseTime(+new Date(d.jaar, 0, 1))); })
         .y(function(d) { return koopkrachty(d.totaleBevolking); });
 
     const pensioenline = d3.line()
-        .x(function(d) { return koopkrachtx(parseTime(+new Date(d.jaar, 1, 1))); })
+        .x(function(d) { return koopkrachtx(parseTime(+new Date(d.jaar, 0, 1))); })
         .y(function(d) { return koopkrachty(d.gepensioneerden); });
 
     koopkrachtgroup.append("path")
@@ -135,7 +135,7 @@ const formatYear = d3.timeFormat("%Y");
         // call the bisector to get our index
         i = bisectDate(koopkrachtData, x0);
         
-        koopkrachttooltip.html(formatYear(x0) + "<b>" +
+        koopkrachttooltip.html(Number(formatYear(x0))+1 + "<b>" +
             "<div class='box box-totaal'>Totale bevolking: " + koopkrachtData[i].totaleBevolking + "</div>" + 
             "<div class='box box-gepensioneerden'>Gepensioneerden: " + koopkrachtData[i].gepensioneerden + "</div>"
             + "</b>")
